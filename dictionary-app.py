@@ -9,7 +9,11 @@ def readDictionary():
     words = []
     for line in lines:
         x = line.split()
-        if len(x) > 1 :
+        if len(x) > 1 and x[0].lower() == 'usage':
+            data[-1] += ('\n' + line)
+        elif len(x) > 1 and len(words) > 1 and x[0].lower() == words[-1] :
+            data[-1] += ('\n' + line)
+        elif len(x) > 1 :
             words.append(x[0].lower())
             data.append(line)
     return (words, data)
@@ -30,8 +34,8 @@ def searchWords(words, searchWord):
     index = int(wordCount / 2)
     lower = 0
     upper = wordCount - 1
-    while index <= upper and index >= lower :
-##        print(str(index) + ' ' + words[index])
+    while lower < upper :
+##        print(str(index) + ' ' + words[index] + ' ' + str(lower) + ' ' + str(upper))
         dictionaryWord = words[index].replace('-', '')
             
         if searchWord == dictionaryWord :
@@ -40,7 +44,7 @@ def searchWords(words, searchWord):
             lower = index + 1
             index = int((lower + upper) / 2)
         elif searchWord < dictionaryWord :
-            upper = index - 1
+            upper = index
             index = int((lower + upper) / 2)
 
 ##    Alternative method but not very effective...
@@ -71,8 +75,15 @@ def findNearest(buckets, searchWord):
                     suggestions[levDistance].append(word)
                 else :
                     suggestions[levDistance] = [word]
+
+    finalSuggestions = []
+    for i in range(5) :
+        if i in suggestions:            
+            for suggestion in suggestions[i]:
+                if suggestion not in finalSuggestions:
+                    finalSuggestions.append(suggestion)
             
-    return suggestions
+    return finalSuggestions
 
 def main():
     (words, data) = readDictionary()
@@ -85,15 +96,13 @@ def main():
     else :
         print("Word not found in dictionary. Did you mean? ")        
         suggestions = findNearest(buckets, searchWord)
+        totalSuggestions = 0
+        for suggestion in suggestions :
+            print(suggestion)
+            totalSuggestions += 1
+            if totalSuggestions >= 3:
+                break
 
-    totalSuggestions = 0
-    for i in range(5) :
-        if i in suggestions:            
-            for suggestion in suggestions[i]:
-                print(suggestion)
-                totalSuggestions += 1
-                if totalSuggestions > 3 :
-                    break
 
 if __name__ == '__main__' :
     main()
