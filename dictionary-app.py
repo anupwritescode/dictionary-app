@@ -92,7 +92,7 @@ def main():
             for suggestion in suggestions[i]:
                 print(suggestion)
                 totalSuggestions += 1
-                if totalSuggestions > 5 :
+                if totalSuggestions > 3 :
                     break
 
 if __name__ == '__main__' :
